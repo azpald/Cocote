@@ -532,7 +532,9 @@ const showUserList = e => {
 			}, 100);
 		};
 		userListControls.divBtnsBottom.appendChild(btnGetCss);
+		userListControls.divBtnsBottom.btnGetCss = btnGetCss;
 	}
+	userListControls.divBtnsBottom.btnGetCss.classList.remove('copied');
 	divUserList.appendChild(userListControls.divBtnsBottom);
 }
 
