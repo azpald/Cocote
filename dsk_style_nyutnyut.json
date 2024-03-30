@@ -1,0 +1,137 @@
+{
+    ":root": {
+        "selector": ":root",
+        "style": {
+            "--color-nyutnyut": "#FEF1E0",
+            "--color-nyutnyut2": "#ecd4b5",
+            "--line-nyutnyut": "#6B5547",
+            "--eye-nyutnyut": "url(https://i.imgur.com/aGBfPVd.gif)",
+            "--lipi-nyutnyut": "url(https://i.imgur.com/R9qnEmk.png)",
+            "--lipm-nyutnyut": "url(https://i.imgur.com/id7swok.gif)",
+            "--mute-nyutnyut": "url(https://i.imgur.com/IDlpEQH.png)",
+            "--barret-nyutnyut": "url(https://i.imgur.com/7MSSBb4.png)"
+        }
+    },
+    ".voice_container > ul > li[data-userid]": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"]",
+        "style": {
+            "display": "flex",
+            "--size-default": "500px",
+            "position": "relative",
+            "z-index": "1",
+            "box-sizing": "border-box",
+            "transition-duration": "0.5s",
+            "transition-timing-function": "ease-out",
+            "width": "var(--size-default)"
+        }
+    },
+    ".voice_container > ul > li[data-userid]::before": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"]::before",
+        "style": {
+            "content": "''",
+            "position": "absolute",
+            "background-color": "purple",
+            "width": "calc(var(--size-default) / 5)",
+            "height": "calc(var(--size-default) / 5)",
+            "border-radius": "50%",
+            "transition-duration": "0.2s",
+            "left": "calc(var(--size-default) / 5 * 2)",
+            "bottom": "0px",
+            "z-index": "-1",
+            "background": "transparent",
+            "box-shadow": "calc(var(--size-default) * 0.263) 0px var(--color-nyutnyut), calc(var(--size-default) * 0.273) 0px var(--line-nyutnyut), calc(var(--size-default) * 0.273) calc(var(--size-default) * 0.01) var(--line-nyutnyut), calc(var(--size-default) * 0.263) calc(var(--size-default) * 0.01) var(--line-nyutnyut), calc(var(--size-default) * -0.263) 0px var(--color-nyutnyut), calc(var(--size-default) * -0.273) calc(var(--size-default) * 0.01) var(--line-nyutnyut), calc(var(--size-default) * -0.273) 0px var(--line-nyutnyut), calc(var(--size-default) * -0.263) calc(var(--size-default) * 0.01) var(--line-nyutnyut)"
+        }
+    },
+    ".voice_container > ul > li[data-userid]::after": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"]::after",
+        "style": {
+            "content": "''",
+            "position": "absolute",
+            "background-color": "var(--color-nyutnyut)",
+            "width": "calc(var(--size-default) * 0.84)",
+            "height": "calc(var(--size-default) * 0.73)",
+            "box-sizing": "border-box",
+            "border-style": "solid",
+            "border-color": "var(--line-nyutnyut)",
+            "border-radius": "50%",
+            "border-width": "calc(var(--size-default) * 0.01)",
+            "transition-duration": "0.2s",
+            "z-index": "1",
+            "background-image": "var(--eye-nyutnyut), var(--lipi-nyutnyut), radial-gradient(circle at 40% 40%, var(--color-nyutnyut) 0%, var(--color-nyutnyut) 40%, var(--color-nyutnyut2) 90%)",
+            "background-size": "90%, 90%, cover",
+            "background-position": "50% calc(var(--size-default) * 0.05), 50% calc(var(--size-default) * 0.03)",
+            "background-repeat": "no-repeat",
+            "animation": "nyutnyut 1s infinite ease-in-out alternate",
+            "animation-delay": "var(--anim-delay)"
+        }
+    },
+    ".voice_container > ul > li[data-userid] div.voice_username": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"] div.voice_username",
+        "style": {
+            "padding-bottom": "var(--size-default)"
+        }
+    },
+    ".voice_container > ul > li[data-userid] img": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"] img",
+        "style": {
+            "position": "absolute",
+            "width": "0px",
+            "height": "0px",
+            "z-index": "2",
+            "box-sizing": "border-box",
+            "background-image": "var(--barret-nyutnyut)",
+            "background-size": "100%",
+            "background-position": "50% 40%",
+            "background-repeat": "no-repeat",
+            "border-radius": "0",
+            "padding": "calc(var(--size-default) * 0.34) calc(var(--size-default) * 0.47)",
+            "border": "transparent",
+            "transform-origin": "right bottom",
+            "transform": "translate(0px, calc(var(--size-default) * -0.5))",
+            "animation": "hatnyut 1s infinite ease-in-out alternate",
+            "animation-delay": "var(--anim-delay)"
+        }
+    },
+    ".voice_container > ul > li.wrapper_speaking[data-userid]": {
+        "selector": ".voice_container > ul > li.wrapper_speaking[data-userid=\"{{user_id}}\"]",
+        "style": {
+            "transition-duration": "0.1s",
+            "transform": "translate(0px, -10px) scale(1.05)",
+            "transition-timing-function": "linear"
+        }
+    },
+    ".voice_container > ul > li.wrapper_speaking[data-userid]::before": {
+        "selector": ".voice_container > ul > li.wrapper_speaking[data-userid=\"{{user_id}}\"]::before",
+        "style": {
+            "transition-duration": "0.1s",
+            "animation-timing-function": "ease-out",
+            "bottom": "calc(var(--size-default) * -0.02)",
+            "box-shadow": "calc(var(--size-default) * 0.238) 0px var(--color-nyutnyut), calc(var(--size-default) * 0.248) 0px var(--line-nyutnyut), calc(var(--size-default) * 0.248) calc(var(--size-default) * 0.01) var(--line-nyutnyut), calc(var(--size-default) * 0.238) calc(var(--size-default) * 0.01) var(--line-nyutnyut), calc(var(--size-default) * -0.238) 0px var(--color-nyutnyut), calc(var(--size-default) * -0.248) calc(var(--size-default) * 0.01) var(--line-nyutnyut), calc(var(--size-default) * -0.248) 0px var(--line-nyutnyut), calc(var(--size-default) * -0.238) calc(var(--size-default) * 0.01) var(--line-nyutnyut)"
+        }
+    },
+    ".voice_container > ul > li.wrapper_speaking[data-userid]::after": {
+        "selector": ".voice_container > ul > li.wrapper_speaking[data-userid=\"{{user_id}}\"]::after",
+        "style": {
+            "background-image": "var(--eye-nyutnyut), var(--lipm-nyutnyut), radial-gradient(circle at 40% 40%, var(--color-nyutnyut) 0%, var(--color-nyutnyut) 40%, var(--color-nyutnyut2) 90%)",
+            "transition-duration": "0.2s"
+        }
+    },
+    ".voice_container > ul > li.wrapper_speaking[data-userid] img": {
+        "selector": ".voice_container > ul > li.wrapper_speaking[data-userid=\"{{user_id}}\"] img",
+        "style": {
+            "border": "transparent",
+            "animation": "hatnyut 1s infinite ease-in-out alternate, hatfly 1s  ease-in-out alternate"
+        }
+    },
+    ".voice_container > ul > li.self_mute[data-userid]::after": {
+        "selector": ".voice_container > ul > li.self_mute[data-userid=\"{{user_id}}\"]::after",
+        "style": {
+            "background-image": "var(--eye-nyutnyut), var(--mute-nyutnyut), radial-gradient(circle at 40% 40%, var(--color-nyutnyut) 0%, var(--color-nyutnyut) 40%, var(--color-nyutnyut2) 90%)"
+        }
+    },
+    "@keyframes": {
+        "hatnyut": "{from { padding-bottom: calc(var(--size-default) * 0.31);} to { padding-bottom: calc(var(--size-default) * 0.34);}}",
+        "hatfly": "{5% {transform: translate(1px, calc(var(--size-default) * -0.52)) rotate(4deg);}40%,to,from {transform: translate(0px, calc(var(--size-default) * -0.5));}}",
+        "nyutnyut": "{from {height: calc(var(--size-default) * 0.70);}to {height: calc(var(--size-default) * 0.73);}}"
+    }
+}

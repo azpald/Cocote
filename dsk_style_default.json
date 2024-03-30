@@ -1,0 +1,74 @@
+{
+    "#root": {
+        "selector": "#root",
+        "style": {
+            "bottom": "10px",
+            "right": "0",
+            "position": "fixed",
+            "min-width": "100%"
+        }
+    },
+    ".voice_container > ul": {
+        "selector": ".voice_container > ul",
+        "style": {
+            "display": "flex",
+            "align-items": "flex-end",
+            "flex-direction": "row-reverse",
+            "justify-content": "flex-start",
+            "margin-right": "50px",
+            "margin-left": "50px"
+        }
+    },
+    ".voice_container > ul > li": {
+        "selector": ".voice_container > ul > li",
+        "style": {
+            "margin": "5px",
+            "display": "none",
+            "flex-direction": "column",
+            "align-items": "center",
+            "justify-content": "flex-end",
+            "height": "80px",
+            "position": "relative"
+        }
+    },
+    ".voice_container > ul > li.wrapper_speaking > img": {
+        "selector": ".voice_container > ul > li.wrapper_speaking > img",
+        "style": {
+            "border": "none"
+        }
+    },
+    "img.voice_avatar": {
+        "selector": "img.voice_avatar",
+        "style": {
+            "margin": "1px auto",
+            "order": "2"
+        }
+    },
+    "div.voice_username": {
+        "selector": "div.voice_username",
+        "style": {
+            "padding-bottom": "80px",
+            "order": "1"
+        }
+    },
+
+
+    ".voice_container > ul > li[data-userid]:nth-child(4n+0)": {
+        "selector": "XXX.voice_container > ul > li[data-userid]:nth-child(4n+0)",
+        "style": {
+            "--anim-delay": "-0.25s"
+        }
+    },
+    ".voice_container > ul > li[data-userid]:nth-child(4n+1)": {
+        "selector": "xxx.voice_container > ul > li[data-userid]:nth-child(4n+1)",
+        "style": {
+            "--anim-delay": "-0.5s"
+        }
+    },
+    ".voice_container > ul > li[data-userid]:nth-child(4n+2)": {
+        "selector": "xxx.voice_container > ul > li[data-userid]:nth-child(4n+2)",
+        "style": {
+            "--anim-delay": "-0.75s"
+        }
+    }
+}

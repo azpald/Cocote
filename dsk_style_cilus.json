@@ -1,0 +1,123 @@
+{
+    ":root": {
+        "selector": ":root",
+        "style": {
+            "--cilus-halo0": "url(https://i.imgur.com/busKVW2.png)",
+            "--cilus-halo1": "url(https://i.imgur.com/Trdg8tr.png)",
+            "--cilus-cloud0": "url(https://i.imgur.com/UE966CP.png)",
+            "--cilus-cloud1": "url(https://i.imgur.com/4kunZGi.png)",
+            "--cilus-cloud1f": "url(https://i.imgur.com/axTgHZG.png)",
+            "--cilus-body": "url(https://i.imgur.com/d0uNuK6.png)",
+            "--cilus-eyes": "url(https://i.imgur.com/9Ypef6g.png)",
+            "--cilus-lipsm": "url(https://i.imgur.com/0ROsLwo.gif)",
+            "--cilus-lipsi": "url(https://i.imgur.com/Xhf60rS.png)"
+        }
+    },
+    ".voice_container > ul > li[data-userid]": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"]",
+        "style": {
+            "display": "flex",
+            "--size-default": "600px",
+            "--halo-period": "4s",
+            "position": "relative",
+            "box-sizing": "border-box",
+            "transition-duration": "0.5s",
+            "transition-timing-function": "ease-out",
+            "width": "calc(var(--size-default) * 1.2)",
+            "height": "var(--size-default)",
+            "background-size": "calc(var(--size-default) * 0.6) auto",
+            "background-repeat": "no-repeat",
+            "background-position": "center bottom",
+            "margin": "0px calc(var(--size-default) * -0.06)"
+        }
+    },
+    ".voice_container > ul > li[data-userid]::before": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"]::before",
+        "style": {
+            "content": "''",
+            "position": "absolute",
+            "z-index": "2",
+            "box-sizing": "border-box",
+            "width": "calc(var(--size-default) * 1.2)",
+            "height": "var(--size-default)",
+            "left": "0px",
+            "top": "0px",
+            "background-image": "var(--cilus-cloud1f), var(--cilus-cloud0), var(--cilus-halo1), var(--cilus-cloud1)",
+            "background-size": "calc(var(--size-default) * 0.4) auto, calc(var(--size-default) * 0.4) auto, calc(var(--size-default) * 1) auto, calc(var(--size-default) * 0.4) auto",
+            "background-repeat": "no-repeat",
+            "background-position": "120% 80%, center bottom",
+            "animation": "cloud-spin2 var(--halo-period) linear infinite, cilus-flying 6s linear infinite",
+            "animation-delay": "0s, var(--anim-delay)",
+            "transform": "var(--halo-transform)"
+        }
+    },
+    ".voice_container > ul > li[data-userid]::after": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"]::after",
+        "style": {
+            "content": "''",
+            "position": "absolute",
+            "z-index": "-1",
+            "box-sizing": "border-box",
+            "width": "calc(var(--size-default) * 1.2)",
+            "height": "var(--size-default)",
+            "left": "0px",
+            "top": "0px",
+            "background-image": "var(--cilus-cloud1), var(--cilus-cloud0), var(--cilus-halo0)",
+            "background-size": "calc(var(--size-default) * 0.4) auto, calc(var(--size-default) * 0.4) auto, calc(var(--size-default) * 1) auto",
+            "background-repeat": "no-repeat",
+            "background-position": "100% 85%,  0% 85%, center bottom",
+            "animation": "cloud-spin1 var(--halo-period) linear infinite, cilus-flying 6s linear infinite",
+            "animation-delay": "0s, var(--anim-delay)",
+            "transform": "var(--halo-transform)"
+        }
+    },
+    ".voice_container > ul > li[data-userid] div.voice_username": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"] div.voice_username",
+        "style": {
+            "padding-bottom": "0"
+        }
+    },
+    ".voice_container > ul > li[data-userid] img": {
+        "selector": ".voice_container > ul > li[data-userid=\"{{user_id}}\"] img",
+        "style": {
+            "position": "relative",
+            "width": "0px",
+            "height": "0px",
+            "box-sizing": "border-box",
+            "background-image": "var(--cilus-eyes), var(--cilus-lipsi), var(--cilus-body)",
+            "background-repeat": "no-repeat",
+            "background-size": "110%",
+            "background-position": "50% 50%",
+            "border-radius": "50%",
+            "padding": "calc(var(--size-default) * 0.36) calc(var(--size-default) * 0.36)",
+            "border": "transparent",
+            "transform-origin": "center bottom",
+            "animation": "cilus-faceshake 2s infinite linear alternate, cilus-flying2 6s linear infinite",
+            "animation-delay": "0s, var(--anim-delay)",
+            "transition-duration": "1s"
+        }
+    },
+    ".voice_container > ul > li.wrapper_speaking[data-userid]": {
+        "selector": ".voice_container > ul > li.wrapper_speaking[data-userid=\"{{user_id}}\"]",
+        "style": {
+            "transform": "scale(1.1)",
+            "transform-origin": "center",
+            "transition-duration": "0.2s"
+        }
+    },
+    ".voice_container > ul > li.wrapper_speaking[data-userid] img": {
+        "selector": ".voice_container > ul > li.wrapper_speaking[data-userid=\"{{user_id}}\"] img",
+        "style": {
+            "background-image": "var(--cilus-eyes), var(--cilus-lipsm), var(--cilus-body)",
+            "transform": "scale(1.05) translate(0px, calc(var(--size-default) * -0.05))",
+            "transition-duration": "0.2s"
+        }
+    },
+    "@keyframes": {
+        "cilus-flying": "{from, to{margin-top: 0px;}50% {margin-top: 5%;}}",
+        "cloud-spin1": "{0%,100% {background-position: 100% 80%, 0% 85%, center bottom;}11% {background-position: 85% 70%, 15% 95%, center bottom;}25% {background-position: 50% 65%, 50% 95%, center bottom;}39% {background-position: 15% 70%, 85% 95%, center bottom;}50% {background-position: 0% 80%, 100% 85%, center bottom;}61% {background-position: 15% 95%, 85% 70%, center bottom;}75% {background-position: 50% 100%, 50% 65%, center bottom;}89% {background-position: 85% 95%, 15% 70%, center bottom;}}",
+        "cloud-spin2": "{50.1%,99% {background-image: none, none, var(--cilus-halo1), var(--cilus-cloud1);}0%,100% {background-image: none, var(--cilus-cloud0), var(--cilus-halo1), none;background-position: 100% 80%, 0% 85%, center bottom, 100% 80%;}11% {background-image: none, var(--cilus-cloud0), var(--cilus-halo1), none;background-position: 85% 70%, 15% 95%, center bottom, 85% 70%;}25% {background-image: none, var(--cilus-cloud0), var(--cilus-halo1), none;background-position: 50% 65%, 50% 95%, center bottom, 50% 65%;}39% {background-image: none, var(--cilus-cloud0), var(--cilus-halo1), none;background-position: 15% 70%, 85% 95%, center bottom, 15% 70%;}50% {background-image: none, var(--cilus-cloud0), var(--cilus-halo1), none;background-position: 0% 80%, 100% 85%, center bottom, 0% 80%;}61% {background-image: var(--cilus-cloud1f), none, var(--cilus-halo1), var(--cilus-cloud1);background-position: 15% 95%, 85% 70%, center bottom, 15% 95%;}75% {background-image: var(--cilus-cloud1f), none, var(--cilus-halo1), var(--cilus-cloud1);background-position: 50% 100%, 50% 65%, center bottom, 50% 100%;}89% {background-image: var(--cilus-cloud1f), none, var(--cilus-halo1), var(--cilus-cloud1);background-position: 85% 95%, 15% 70%, center bottom, 85% 95%;}}",
+        "cilus-faceshake": "{from{background-position: 50% 50%, 50% 50%, 50% 50%;}to {background-position: 50% 10%, 50% 10%, 50% 50%;}}",
+        "cilus-flying2": "{from, to{margin-bottom: 0px;}50% {margin-bottom: -5%;}}"
+    }
+}

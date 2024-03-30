@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Cocote</title>
+	<style>
+		.container {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-evenly;
+			gap: 10px;
+		}
+		header {
+			margin-bottom: 10px;
+		}
+		h1, h2 {
+			margin: 4px;
+		}
+		.container .sidebar {
+			flex: 2 0 0;
+			min-width: 250px;
+			max-height: 90vh;
+			overflow-y: scroll;
+			background-color: antiquewhite;
+/*			border: solid 1px limegreen;*/
+		}
+		.container .mainpanel {
+			flex: 6 0 0;
+			min-width: 250px;
+			padding: 4px;
+/*			border: solid 1px limegreen;*/
+		}
+
+		#preview {
+			position: absolute;
+			border: none;
+		}
+		#previewCover {
+			position: relative;
+			height: 400px;
+			visibility: hidden;
+		}
+		.modal {
+			position: fixed;
+			z-index: 50;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 0;
+		}
+		.modal::before {
+			content: '';
+			background: black;
+			opacity: 0.6;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			z-index: -1;
+		}
+		.modal.loading::after {
+			content: '';
+			background: transparent;
+			width: 50px;
+			height: 50px;
+			animation: loading 2s linear infinite;
+			border: solid 5px;
+			border-radius: 50%;
+			border-color: transparent white;
+		}
+		@keyframes loading {
+			0%{
+				transform: rotate(0deg);
+			}
+			100%{
+				transform: rotate(360deg);
+			}
+		}
+
+		button {
+			border: solid #234 1px;
+			border-radius: 2px;
+		}
+
+		button.red {
+			background-color: red;
+			color: white;
+		}
+
+		button.red:hover {
+			background-color: tomato;
+			color: white;
+		}
+
+		button.green {
+			background-color: springgreen;
+			color: black;
+		}
+
+		button.green:hover {
+			background-color: yellowgreen;
+			color: black;
+		}
+
+		button, .button {
+			cursor: pointer;
+			padding: 2px;
+			min-width: 25px;
+			margin: 1px;
+		}
+
+		.sidebar .itemlist {
+			padding: 5px 8px;
+			border: ridge 1px #aaa;
+			margin: 2px 5px;
+			border-radius: 2px;
+			position: relative;
+			background-color: white;
+		}
+		#activeUserList {
+			background-color: aqua;
+		}
+
+		.copied::after {
+			content: "CSS copied to clipboard";
+			position: fixed;
+			width: auto;
+			animation: copied 5s 1;
+			padding: 10px;
+			margin: 10px;
+			right: 0;
+			bottom: 0;
+			background-color: yellow;
+			border-radius: 5px;
+			visibility: hidden;
+			pointer-events: none;
+		}
+
+		@keyframes copied {
+			from, to {
+				visibility: visible;
+			}
+		}
+
+	</style>
+</head>
+<body>
+	<header>
+		<h1>Cocote | Discord Voice Call Custom CSS</h1>
+	</header>
+	<div class="container">
+		<aside class="sidebar">
+			<h2>Users</h2>
+			<div id="userList"></div>
+		</aside>
+
+		<section class="mainpanel">
+			<div>
+				<span id="prevUname" class=""></span>
+				<span id="prevUid" class=""></span>
+			</div>
+			<div>
+				<select id="selectModel" style="display: none;"></select>
+			</div>
+			<iframe id="preview" src="data:text/html;base64, Cg=="></iframe>
+			<div id="previewCover"></div>
+		</section>
+	</div>
+
+	<div class="modal loading" id="modalLoading"></div>
+
+</body>
+
+
+
+<script>
+const models = {
+	"nyutnyut": {
+		"name": "Nyut Nyut",
+		"url": "dsk_style_nyutnyut.json",
+		"data": null,
+	},
+	"cilus": {
+		"name": "Cilus",
+		"url": "dsk_style_cilus.json",
+		"data": null,
+	},
+};
+var baseCss = null;
+var cssAll = {};
+var users = [];
+var userActive = null;
+
+const loadInit = async e => {
+	await fetch("dsk_style_default.json")
+		.then(re => {
+			return re.json();
+		})
+		.then(re => {
+			baseCss = re;
+			cssAll = combineCss(cssAll, re, {});
+		})
+		.catch(er => {
+			throw er;
+		});
+	for (let name in models) {
+		await fetch(models[name].url)
+			.then(re => {
+				return re.json();
+			})
+			.then(re => {
+				models[name].data = re;
+
+				let option = document.createElement('option');
+				option.setAttribute('value', name);
+				option.innerText = models[name].name;
+				window.selectModel.appendChild(option);
+			})
+			.catch(er => {
+				console.error(er);
+			});
+	}
+	document.querySelector("#preview").src = "data:text/html;base64, Cg==";
+	document.querySelector("#modalLoading").style.display = "none";
+	usersLoad();
+	showUserList();
+}
+
+onload = async e => {
+	resizePreview();
+	await loadInit();
+}
+
+onresize = e => {
+	resizePreview();
+}
+
+
+const resizePreview = e => {
+	let size = 800;
+	window.preview.style.width = size + 'px';
+	window.preview.style.height = size + 'px';
+	window.preview.style.transformOrigin = '0 0';
+	let parentWidth = window.preview.parentNode.offsetWidth;
+	let width = Math.min(parentWidth, size/2);
+	window.preview.style.transform = 'scale(' + (width/size) + ')';
+	window.previewCover.style.height = width + 'px';
+	window.preview.style.marginLeft = Math.max(0, (parentWidth - width)/2) + 'px';
+};
+
+var previewHTML = '<div id="root"><div class="Voice_voiceContainer__adk9M voice_container"><ul class="Voice_voiceStates__a121W voice_states"><li class="Voice_voiceState__OCoZh is_widget_owner voice_state" data-userid="discord_id"><img class="Voice_avatar__htiqH voice_avatar" src="https://cdn.discordapp.com/avatars/365783746248572937/1bcccacd14693e851262d5860b21a5fe.jpg" alt=""></li></ul></div></div>';
+
+
+const combineCss = (styles, json, replacement) => {
+	let newStyles = Object.assign({}, styles);
+	for (let i in json) {
+		let o = json[i];
+
+		if (i == "@keyframes") {
+			if (!newStyles.hasOwnProperty("@keyframes")) {
+				newStyles["@keyframes"] = o;
+			} else {
+				newStyles["@keyframes"] = {
+					...newStyles["@keyframes"],
+					...o
+				};
+			}
+			continue;
+		}
+
+		if (i[0] == "!") {
+			continue;
+		}
+
+		let key = selectorReplace(o.selector, replacement);
+		if (!newStyles.hasOwnProperty(key)) {
+			newStyles[key] = o.style;
+		} else {
+			newStyles[key] = {
+				...newStyles[key],
+				...o.style
+			};
+		}
+	}
+	return newStyles;
+}
+
+const generateCss = json => {
+	let css = '';
+	for (let i in json) {
+		let o = json[i];
+
+		if (i == "@keyframes") {
+			css += Object.keys(o).map(el => "@keyframes " + el + o[el]).join("\n");
+			css += "\n";
+			continue;
+		}
+
+		if (i[0] == "!") {
+			continue;
+		}
+
+		css += i + " {\n";
+		css += Object.keys(o).map(el => "  " + el + ": " + o[el] + ";").join("\n");
+		css += "\n}\n";
+	}
+	return css;
+}
+
+
+const selectorReplace = (text, replacement) => {
+	for (let i in replacement) {
+		text = text.split(i).join(replacement[i])
+	}
+	return text;
+}
+
+const addUser = (name, discord_id, model_id="nyutnyut") => {
+	let user = {
+		"name": name,
+		"discord_id": discord_id,
+		"model_id": model_id,
+	};
+	users.push(user);
+	showUserList();
+	showPreview(user);
+	usersStore();
+}
+
+const showPreview = user => {
+	userActive = user;
+
+	window.selectModel.value = user.model_id;
+	window.selectModel.style.removeProperty("display");
+	try {
+		document.querySelector("#activeUserList").removeAttribute("id");
+	} catch (err) {}
+	try {
+		user.div.setAttribute("id", "activeUserList");
+	} catch (err) {}
+
+	let css = combineCss(cssAll, models[user.model_id].data ?? {}, {
+		"{{user_id}}": "discord_id",
+	});
+	css = combineCss(css, {
+		'x': {
+			'selector': 'body',
+			'style': {
+				'background-color': '#eee'
+			},
+		},
+		"y": {
+			"selector": ".voice_container > ul",
+			"style": {
+				"align-items": "baseline",
+				"justify-content": "center",
+			}
+		}
+	}, {});
+	css = generateCss(css);
+	window.prevUname.innerText = user.name;
+	window.prevUid.innerText = `(${user.discord_id})`;
+	let head = `<div><div>${user.name}</div><div>${user.discord_id}</div></div>`;
+	let fInc = e => {
+		window.inc = 0;
+		window.label = document.createElement("div");
+		window.label.setAttribute("style", "font-size: 200%; position: fixed; margin: 5px; background-color: khaki;");
+		document.body.appendChild(window.label);
+		document.body.addEventListener("click", ev => {
+			window.inc = (window.inc + 1) % 3;
+			let li = document.querySelector(".voice_container > ul > li");
+			window.label.innerText = "IDLE";
+			li.classList.remove("wrapper_speaking");
+			li.classList.remove("self_mute");
+			switch (window.inc) {
+				case 1:
+					window.label.innerText = "SPEAKING";
+					li.classList.add("wrapper_speaking");
+					break;
+				case 2:
+					window.label.innerText = "SELF MUTE";
+					li.classList.add("self_mute");
+					break;
+			}
+		});
+	}
+	let url = "data:text/html;base64, " + btoa(previewHTML + "<style>" + css + "</style><script>onload=" + fInc.toString() + "<\/script>");
+	document.querySelector("#preview").src = url;
+
+};
+
+const resetPreview = ev => {
+	userActive = null;
+	window.prevUname.innerText = '';
+	window.prevUid.innerText = '';
+	document.querySelector("#preview").src = "data:text/html;base64, ";
+	window.selectModel.style.display = 'none';
+}
+
+const userListControls = {
+	divBtnsBottom: null,
+};
+const showUserList = e => {
+	let divUserList = document.querySelector("#userList");
+	divUserList.innerHTML = "";
+	for (let i in users) {
+		let u = users[i];
+		((i, u, users) => {
+			let fSee = ev => {
+				showPreview(u);
+			};
+
+			let div = document.createElement("div");
+			let divEdit = divGenerateEditUser(u, div);
+			div.setAttribute('class', 'itemlist');
+			// div.dataset.userIndex = i;
+			u.div = div;
+
+			let divName = document.createElement("div");
+			divName.setAttribute('style', 'font-weight: 600');
+			divName.setAttribute('class', 'button');
+			divName.innerHTML = u.name;
+			divName.onclick = fSee;
+
+			let divID = document.createElement("div");
+			divID.setAttribute('style', 'font-weight: 200');
+			divID.setAttribute('class', 'button');
+			divID.innerHTML = u.discord_id;
+			divID.onclick = fSee;
+
+			let divBtns = document.createElement("div");
+			divBtns.setAttribute('style', 'position: absolute; right: 0; top: 0; padding: 4px 4px 0 0;');
+			let btnEdit = document.createElement("button");
+			btnEdit.innerHTML = "&#128393;";
+			btnEdit.onclick = ev => {
+				divEdit.style.removeProperty("display");
+				div.style.display = "none";
+			};
+			divBtns.appendChild(btnEdit);
+			let btnDelete = document.createElement("button");
+			btnDelete.setAttribute('class', 'red');
+			btnDelete.innerHTML = "&#128465;";
+			btnDelete.onclick = ev => {
+				if (window.confirm("Delete user?")) {
+					users.splice(i, 1);
+					resetPreview();
+					showUserList();
+					usersStore();
+				}
+			};
+			divBtns.appendChild(btnDelete);
+
+			div.appendChild(divName);
+			div.appendChild(divID);
+			div.appendChild(divBtns);
+			divUserList.appendChild(div);
+			divUserList.appendChild(divEdit);
+		})(i, u, users);
+
+	}
+
+
+	if (!userListControls.divAddUser) {
+		userListControls.divAddUser = document.createElement("div");
+		userListControls.divAddUser.setAttribute('class', 'itemlist');
+		userListControls.divAddUser.style.display = "none";
+
+		let inputName = document.createElement("input");
+		inputName.setAttribute('placeholder', 'Name');
+		userListControls.divAddUser.appendChild(inputName);
+
+		userListControls.divAddUser.appendChild(document.createElement("br"));
+		let inputId = document.createElement("input");
+		inputId.setAttribute('placeholder', 'Discord ID');
+		userListControls.divAddUser.appendChild(inputId);
+
+		let divBtns = document.createElement("div");
+		divBtns.setAttribute('style', 'position: absolute; right: 0; top: 0; padding: 4px 4px 0 0;');
+		let btnOk = document.createElement("button");
+		btnOk.setAttribute('class', 'green');
+		btnOk.innerHTML = "&#x2714;";
+		btnOk.onclick = ev => {
+			if (!inputName.value) {
+				inputName.focus();
+				return false;
+			}
+			if (!inputId.value) {
+				inputId.focus();
+				return false;
+			}
+			addUser(inputName.value.trim(), inputId.value.trim(), "nyutnyut")
+			userListControls.divAddUser.style.display = "none";
+			inputName.value = '';
+			inputId.value = '';
+		};
+		divBtns.appendChild(btnOk);
+		let btnCancel = document.createElement("button");
+		btnCancel.setAttribute('class', 'red');
+		btnCancel.innerHTML = "&#x2718;";
+		btnCancel.onclick = ev => {
+			userListControls.divAddUser.style.display = "none";
+		};
+		divBtns.appendChild(btnCancel);
+		userListControls.divAddUser.appendChild(divBtns);
+
+	}
+	divUserList.appendChild(userListControls.divAddUser);
+
+	if (!userListControls.divBtnsBottom) {
+		userListControls.divBtnsBottom = document.createElement("div");
+		userListControls.divBtnsBottom.setAttribute('style', 'padding: 10px; border-top: solid 1px #eee; text-align: center;');
+
+		let btnAddUser = document.createElement("button");
+		btnAddUser.innerHTML = "Add";
+		btnAddUser.onclick = ev => {
+			userListControls.divAddUser.style.removeProperty("display");
+		};
+		userListControls.divBtnsBottom.appendChild(btnAddUser);
+
+		let btnGetCss = document.createElement("button");
+		btnGetCss.innerHTML = "Copy CSS";
+		btnGetCss.onclick = ev => {
+			let finalCss = getFinalCss();
+			navigator.clipboard.writeText(finalCss);
+			btnGetCss.classList.remove('copied');
+			setTimeout(e=>{
+				btnGetCss.classList.add('copied');
+			}, 100);
+		};
+		userListControls.divBtnsBottom.appendChild(btnGetCss);
+	}
+	divUserList.appendChild(userListControls.divBtnsBottom);
+}
+
+const divGenerateEditUser = (ev, div) => {
+	let divEdit = document.createElement("div");
+	divEdit.setAttribute('class', 'itemlist');
+	divEdit.style.display = "none";
+
+	let inputName = document.createElement("input");
+	inputName.setAttribute('placeholder', 'Name');
+	inputName.setAttribute('value', ev.name);
+	divEdit.appendChild(inputName);
+
+	divEdit.appendChild(document.createElement("br"));
+	let inputId = document.createElement("input");
+	inputId.setAttribute('placeholder', 'Discord ID');
+	inputId.setAttribute('value', ev.discord_id);
+	divEdit.appendChild(inputId);
+
+	let divBtns = document.createElement("div");
+	divBtns.setAttribute('style', 'position: absolute; right: 0; top: 0; padding: 4px 4px 0 0;');
+	let btnOk = document.createElement("button");
+	btnOk.setAttribute('class', 'green');
+	btnOk.innerHTML = "&#x2714;";
+	btnOk.onclick = e => {
+		if (!inputName.value) {
+			inputName.focus();
+			return false;
+		}
+		if (!inputId.value) {
+			inputId.focus();
+			return false;
+		}
+		ev.name = inputName.value.trim();
+		ev.discord_id = inputId.value.trim();
+		showUserList();
+		usersStore();
+	};
+	divBtns.appendChild(btnOk);
+	let btnCancel = document.createElement("button");
+	btnCancel.setAttribute('class', 'red');
+	btnCancel.innerHTML = "&#x2718;";
+	btnCancel.onclick = e => {
+		inputName.value = ev.name;
+		inputId.value = ev.discord_id;
+		divEdit.style.display = "none";
+		div.style.removeProperty("display");
+	};
+	divBtns.appendChild(btnCancel);
+	divEdit.appendChild(divBtns);
+	return divEdit;
+}
+
+
+const getFinalCss = user => {
+	let css = cssAll;
+	for (let user of users) {
+		css = combineCss(css, models[user.model_id].data, {
+			"{{user_id}}": user.discord_id,
+		});
+	}
+	css = generateCss(css);
+	return css;
+};
+
+const usersStore = ev => {
+	window.localStorage.setItem('users', JSON.stringify(users));
+}
+const usersLoad = ev => {
+	let u = window.localStorage.getItem('users');
+	try {
+		users = JSON.parse(u);
+		users = users ?? [];
+	} catch (e) {
+		users = [];
+	}
+}
+
+
+window.selectModel.addEventListener('input', ev => {
+	if (userActive == null) return;
+	userActive.model_id = ev.target.value;
+	showPreview(userActive);
+	usersStore();
+});
+
+</script>
+
+</html>
+<!-- 
+
+https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID
+
+
+ -->
